@@ -1,29 +1,106 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customize Font Preferences</title>
+  <style>
+    :root {
+      --fontsize: 16px;
+      --fontcolor: #000000;
+    }
 
-<html>
-  <head>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+    body {
+      font-size: var(--fontsize);
+      color: var(--fontcolor);
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
 
-  <body>
-    <!-- the entire body must be written by student -->
-    <form>
-      <label for="fontsize">Font Size:</label>
-      <input
-        type="number"
-        id="fontsize"
-        name="fontsize"
-        min="8"
-        max="72"
-        value="16"
-      />
-      <br />
-      <label for="fontcolor">Font Color:</label>
-      <input type="color" id="fontcolor" name="fontcolor" value="#000000" />
-      <br />
-      <input type="submit" value="Save" />
-    </form>
+    form {
+      margin-top: 20px;
+    }
 
-    <script type="text/javascript" src="./script.js"></script>
-  </body>
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input[type="number"],
+    input[type="color"],
+    input[type="submit"] {
+      margin-top: 5px;
+      margin-bottom: 15px;
+      padding: 8px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Customize Your Font</h1>
+
+  <form id="settingsForm">
+    <label for="fontsize">Font Size (8–72 px):</label>
+    <input type="number" id="fontsize" name="fontsize" min="8" max="72" value="16" />
+
+    <label for="fontcolor">Font Color:</label>
+    <input type="color" id="fontcolor" name="fontcolor" value="#000000" />
+
+    <input type="submit" value="Save" />
+  </form>
+
+  <script>
+    // Utility: Get cookie value by name
+    function getCookie(name) {
+      const value = "; " + document.cookie;
+      const parts = value.split("; " + name + "=");
+      if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+
+    // Utility: Set cookie with expiration (1 year)
+    function setCookie(name, value) {
+      const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+      document.cookie = `${name}=${value}; expires=${expires}; path=/`;
+    }
+
+    // Apply saved preferences
+    function applyPreferences() {
+      const savedFontSize = getCookie("fontsize");
+      const savedFontColor = getCookie("fontcolor");
+
+      if (savedFontSize) {
+        document.documentElement.style.setProperty("--fontsize", savedFontSize + "px");
+        document.getElementById("fontsize").value = savedFontSize;
+      }
+
+      if (savedFontColor) {
+        document.documentElement.style.setProperty("--fontcolor", savedFontColor);
+        document.getElementById("fontcolor").value = savedFontColor;
+      }
+    }
+
+    // Save form handler
+    document.getElementById("settingsForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const fontSize = document.getElementById("fontsize").value;
+      const fontColor = document.getElementById("fontcolor").value;
+
+      if (fontSize < 8 || fontSize > 72) {
+        alert("Font size must be between 8 and 72.");
+        return;
+      }
+
+      setCookie("fontsize", fontSize);
+      setCookie("fontcolor", fontColor);
+
+      document.documentElement.style.setProperty("--fontsize", fontSize + "px");
+      document.documentElement.style.setProperty("--fontcolor", fontColor);
+    });
+
+    // On page load
+    window.addEventListener("load", applyPreferences);
+  </script>
+</body>
 </html>
